@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\Verify.vb" />
+    <Compile Include="Constants.vb" />
     <Compile Include="Helpers\Assert.vb" />
     <Compile Include="Helpers\AssertionException.vb" />
     <Compile Include="Helpers\Extensions.vb" />
@@ -82,6 +83,7 @@
     <Compile Include="Helpers\VTuple.vb" />
     <Compile Include="LoginData.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="EndPoint.vb" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.VisualBasic.targets" />
 </Project>
