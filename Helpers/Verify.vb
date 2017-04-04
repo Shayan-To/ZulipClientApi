@@ -1,27 +1,16 @@
 ﻿Public Class Verify
 
     <DebuggerHidden()>
-    Public Shared Sub NonNull(Of T As Class)(ByVal O As T, Optional ByVal Name As String = Nothing)
-        If O Is Nothing Then
-            If Name Is Nothing Then
-                Throw New NullReferenceException(String.Format("Object reference '{0}' not set to an instance of an object.", Name))
-            Else
-                Throw New NullReferenceException()
-            End If
-        End If
-    End Sub
-
-    <DebuggerHidden()>
-    Public Shared Sub [True](ByVal T As Boolean, Optional ByVal Message As String = Nothing)
+    Public Shared Sub [True](ByVal T As Boolean, Optional ByVal Message As String = Nothing, Optional ByVal InnerException As Exception = Nothing)
         If Not T Then
-            Throw New InvalidOperationException(Message)
+            Fail(Message, InnerException)
         End If
     End Sub
 
     <DebuggerHidden()>
-    Public Shared Sub [False](ByVal T As Boolean, Optional ByVal Message As String = Nothing)
+    Public Shared Sub [False](ByVal T As Boolean, Optional ByVal Message As String = Nothing, Optional ByVal InnerException As Exception = Nothing)
         If T Then
-            Throw New InvalidOperationException(Message)
+            Fail(Message, InnerException)
         End If
     End Sub
 
@@ -61,8 +50,8 @@
     End Sub
 
     <DebuggerHidden()>
-    Public Shared Sub Fail(Optional ByVal Message As String = Nothing)
-        Throw New InvalidOperationException(Message)
+    Public Shared Sub Fail(Optional ByVal Message As String = Nothing, Optional ByVal InnerException As Exception = Nothing)
+        Throw New InvalidOperationException(Message, InnerException)
     End Sub
 
     <DebuggerHidden()>
