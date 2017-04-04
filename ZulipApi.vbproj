@@ -70,6 +70,8 @@
     <Compile Include="Helpers\Verify.vb" />
     <Compile Include="Helpers\Assert.vb" />
     <Compile Include="Helpers\AssertionException.vb" />
+    <Compile Include="Helpers\Extensions.vb" />
+    <Compile Include="Helpers\VTuple.vb" />
     <Compile Include="LoginData.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
   </ItemGroup>
