@@ -1,5 +1,24 @@
 ﻿Friend Module Extensions
 
+    <Extension()>
+    Public Async Function GetRequestStreamAsync(ByVal Self As Net.HttpWebRequest) As Task(Of IO.Stream)
+        Dim Res = New TaskCompletionSource(Of IO.Stream)()
+        Await Task.Run(Sub() Self.BeginGetRequestStream(Sub(Ar) Res.SetResult(Self.EndGetRequestStream(Ar)), Nothing))
+        Return Await Res.Task
+    End Function
+
+    <Extension()>
+    Public Async Function GetResponseAsync(ByVal Self As Net.HttpWebRequest) As Task(Of Net.HttpWebResponse)
+        Dim Res = New TaskCompletionSource(Of Net.HttpWebResponse)()
+        Await Task.Run(Sub() Self.BeginGetResponse(Sub(Ar) Res.SetResult(DirectCast(Self.EndGetResponse(Ar), Net.HttpWebResponse)), Nothing))
+        Return Await Res.Task
+    End Function
+
+    <Extension()>
+    Public Async Function GetResponseStreamAsync(ByVal Self As Net.WebResponse) As Task(Of IO.Stream)
+        Return Await Task.Run(Function() Self.GetResponseStream())
+    End Function
+
     Private Function LeastPowerOfTwoOnMin(ByVal Min As Integer) As Integer
         If Min < 1 Then
             Return 1

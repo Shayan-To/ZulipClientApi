@@ -1,17 +1,24 @@
 ﻿Public Structure LoginData
 
-#Region "Method Property"
-    Private _Method As LoginDataMethod
+    Friend Function GetDataForFetchApiKey() As KeyValuePair(Of String, String)()
+        Return New KeyValuePair(Of String, String)() {
+                   New KeyValuePair(Of String, String)(Constants.FetchApiKey.Input_UserName, Me.UserName),
+                   New KeyValuePair(Of String, String)(Constants.FetchApiKey.Input_Password, Me.Password)
+               }
+    End Function
 
-    Public Property Method As LoginDataMethod
+#Region "Method Property"
+    Private _Method As LoginMethod
+
+    Public Property Method As LoginMethod
         Get
             Return Me._Method
         End Get
-        Set(ByVal Value As LoginDataMethod)
-            If Value = LoginDataMethod.ApiKey Then
-                Me.Password = Nothing
-            ElseIf Value = LoginDataMethod.Password Then
-                Me.ApiKey = Nothing
+        Set(ByVal Value As LoginMethod)
+            If Value = LoginMethod.ApiKey Then
+                Me._Password = Nothing
+            ElseIf Value = LoginMethod.Password Then
+                Me._ApiKey = Nothing
             Else
                 Verify.FailArg(NameOf(Me.Method), "Value must be from within the available values.")
             End If
@@ -42,7 +49,7 @@
             Return Me._ApiKey
         End Get
         Set(ByVal Value As String)
-            Verify.True(Me.Method = LoginDataMethod.ApiKey, $"Cannot set {NameOf(Me.ApiKey)} when {NameOf(Me.Method)} is not {NameOf(LoginDataMethod.ApiKey)}.")
+            Verify.True(Me.Method = LoginMethod.ApiKey, $"Cannot set {NameOf(Me.ApiKey)} when {NameOf(Me.Method)} is not {NameOf(LoginMethod.ApiKey)}.")
             Me._ApiKey = Value
         End Set
     End Property
@@ -56,7 +63,7 @@
             Return Me._Password
         End Get
         Set(ByVal Value As String)
-            Verify.True(Me.Method = LoginDataMethod.Password, $"Cannot set {NameOf(Me.Password)} when {NameOf(Me.Method)} is not {NameOf(LoginDataMethod.Password)}.")
+            Verify.True(Me.Method = LoginMethod.Password, $"Cannot set {NameOf(Me.Password)} when {NameOf(Me.Method)} is not {NameOf(LoginMethod.Password)}.")
             Me._Password = Value
         End Set
     End Property
@@ -64,7 +71,7 @@
 
 End Structure
 
-Public Enum LoginDataMethod
+Public Enum LoginMethod
 
     ApiKey = 0
     Password = 1
