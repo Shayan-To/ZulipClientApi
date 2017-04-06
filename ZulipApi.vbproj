@@ -73,7 +73,6 @@
     <Compile Include="Helpers\Assert.vb" />
     <Compile Include="Helpers\AssertionException.vb" />
     <Compile Include="Helpers\Extensions.vb" />
-    <Compile Include="Helpers\IniDictionary.vb" />
     <Compile Include="Helpers\Json\JsonDictionaryObject.vb" />
     <Compile Include="Helpers\Json\JsonListObject.vb" />
     <Compile Include="Helpers\Json\JsonObject.vb" />
@@ -81,6 +80,7 @@
     <Compile Include="Helpers\Json\JsonParser.vb" />
     <Compile Include="Helpers\Json\JsonValueObject.vb" />
     <Compile Include="Helpers\Json\JsonWriter.vb" />
+    <Compile Include="Helpers\SimpleDictionary.vb" />
     <Compile Include="Helpers\VTuple.vb" />
     <Compile Include="LoginData.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

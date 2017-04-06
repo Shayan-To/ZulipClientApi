@@ -1,6 +1,6 @@
 ﻿Friend Class IniParser
 
-    Public Function Parse(ByVal Input As String) As IniDictionary
+    Public Function Parse(ByVal Input As String) As SimpleDictionary(Of String, String)
         Me.Input = Input.ToCharArray()
         Me.Index = 0
         Dim Res = Me.Parse()
@@ -8,7 +8,7 @@
         Return Res
     End Function
 
-    Private Function Parse() As IniDictionary
+    Private Function Parse() As SimpleDictionary(Of String, String)
         Dim Res = New List(Of KeyValuePair(Of String, String))()
         Dim Section = ""
 
@@ -62,7 +62,7 @@
             Res.Add(New KeyValuePair(Of String, String)(Section & Key, Value))
         Loop
 
-        Return New IniDictionary(Res)
+        Return New SimpleDictionary(Of String, String)(Res, StringComparer.OrdinalIgnoreCase)
     End Function
 
     Private Function ReadToken() As Token
