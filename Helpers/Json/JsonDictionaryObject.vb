@@ -54,7 +54,7 @@
         Dim T = Me.List.BinarySearch(New KeyValuePair(Of String, JsonObject)(Key, Nothing), CompareKeyHash)
         For I = 0 To T.Item2 - 1
             If Me.List(T.Item1 + I).Key = Key Then
-                Value = Me.List(I).Value
+                Value = Me.List(T.Item1 + I).Value
                 Return True
             End If
         Next
@@ -67,6 +67,6 @@
 
     Private ReadOnly List As KeyValuePair(Of String, JsonObject)()
 
-    Private Shared ReadOnly CompareKeyHash As Comparison(Of KeyValuePair(Of String, JsonObject)) = Function(A, B) A.Key.GetHashCode() - B.Key.GetHashCode()
+    Private Shared ReadOnly CompareKeyHash As Comparison(Of KeyValuePair(Of String, JsonObject)) = Function(A, B) A.Key.GetHashCode().CompareTo(B.Key.GetHashCode())
 
 End Class
