@@ -165,8 +165,8 @@ Public Class Client
         Return New SimpleDictionary(Of Integer, User)(Res)
     End Function
 
-#Region "Users Read-Only Property"
-    Private _Users As RetrievableData(Of SimpleDictionary(Of Integer, User)) = New RetrievableData(Of SimpleDictionary(Of Integer, User))(AddressOf Me.RetrieveUsers)
+#Region "Users Property"
+    Private _Users As RetrievableData(Of SimpleDictionary(Of Integer, User)) = New RetrievableData(Of SimpleDictionary(Of Integer, User))(AddressOf Me.RetrieveUsers, Sub(V) Me._Users = V)
 
     Public ReadOnly Property Users As RetrievableData(Of SimpleDictionary(Of Integer, User))
         Get
