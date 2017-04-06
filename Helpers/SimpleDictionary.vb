@@ -6,6 +6,9 @@
         Me.List = Items.ToArray()
         Me.Comparer = Comparer
         Array.Sort(Me.List, Me.CompareKeyHash)
+        For I = 0 To Me.List.Length - 2
+            Verify.False(Me.Comparer.Equals(Me.List(I).Key, Me.List(I + 1).Key), "Cannot have two items with the same key.")
+        Next
     End Sub
 
     Public Sub New(ByVal Items As IEnumerable(Of KeyValuePair(Of TKey, TValue)))
@@ -55,9 +58,9 @@
 
     Public Function TryGetValue(Key As TKey, ByRef Value As TValue) As Boolean Implements IReadOnlyDictionary(Of TKey, TValue).TryGetValue
         Dim T = Me.List.BinarySearch(New KeyValuePair(Of TKey, TValue)(Key, Nothing), Me.CompareKeyHash)
-        For I = 0 To T.Item2 - 1
-            If Me.Comparer.Equals(Me.List(T.Item1 + I).Key, Key) Then
-                Value = Me.List(T.Item1 + I).Value
+        For I = T.Item1 To T.Item1 + T.Item2 - 1
+            If Me.Comparer.Equals(Me.List(I).Key, Key) Then
+                Value = Me.List(I).Value
                 Return True
             End If
         Next

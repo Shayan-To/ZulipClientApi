@@ -5,6 +5,9 @@
     Public Sub New(ByVal Items As IEnumerable(Of KeyValuePair(Of String, JsonObject)))
         Me.List = Items.ToArray()
         Array.Sort(Me.List, CompareKeyHash)
+        For I = 0 To Me.List.Length - 2
+            Verify.False(Me.List(I).Key = Me.List(I + 1).Key, "Cannot have two items with the same key.")
+        Next
     End Sub
 
     Public ReadOnly Property Count As Integer Implements IReadOnlyCollection(Of KeyValuePair(Of String, JsonObject)).Count
@@ -52,9 +55,9 @@
 
     Public Function TryGetValue(Key As String, ByRef Value As JsonObject) As Boolean Implements IReadOnlyDictionary(Of String, JsonObject).TryGetValue
         Dim T = Me.List.BinarySearch(New KeyValuePair(Of String, JsonObject)(Key, Nothing), CompareKeyHash)
-        For I = 0 To T.Item2 - 1
-            If Me.List(T.Item1 + I).Key = Key Then
-                Value = Me.List(T.Item1 + I).Value
+        For I = T.Item1 To T.Item1 + T.Item2 - 1
+            If Me.List(I).Key = Key Then
+                Value = Me.List(I).Value
                 Return True
             End If
         Next
