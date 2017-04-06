@@ -88,6 +88,11 @@
         Return Self
     End Function
 
+    <Extension()>
+    Public Function AsReadOnly(Of T)(ByVal Self As IList(Of T)) As IReadOnlyList(Of T)
+        Return New ReadOnlyCollection(Of T)(Self)
+    End Function
+
     Private Function LeastPowerOfTwoOnMin(ByVal Min As Integer) As Integer
         If Min < 1 Then
             Return 1
