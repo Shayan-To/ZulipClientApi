@@ -6,16 +6,6 @@
         Me._IsString = IsString
     End Sub
 
-    Public Function VerifyString() As JsonValueObject
-        Verify.True(Me.IsString, "Value must be a string.")
-        Return Me
-    End Function
-
-    Public Function VerifyNotString() As JsonValueObject
-        Verify.False(Me.IsString, "Value must be a string.")
-        Return Me
-    End Function
-
 #Region "IsString Read-Only Property"
     Private ReadOnly _IsString As Boolean
 
