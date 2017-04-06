@@ -95,6 +95,10 @@
     Public Async Function LoginAsync(ByVal Data As LoginData) As Task
         Verify.False(Me.IsLoggedIn, $"A single instance of `{NameOf(Client)}` cannot log-in two times.")
 
+        Verify.TrueArg(Data.UserName IsNot Nothing, NameOf(Data), $"Invalid data. You must provide `{NameOf(Data.UserName)}`.")
+        Verify.TrueArg((Data.Method = LoginMethod.Password).Implies(Data.Password IsNot Nothing), NameOf(Data), $"Invalid data. You must provide `{NameOf(Data.Password)}` when `{NameOf(Data.Method)}` is `{NameOf(LoginMethod.Password)}`.")
+        Verify.TrueArg((Data.Method = LoginMethod.ApiKey).Implies(Data.ApiKey IsNot Nothing), NameOf(Data), $"Invalid data. You must provide `{NameOf(Data.Password)}` when `{NameOf(Data.Method)}` is `{NameOf(LoginMethod.Password)}`.")
+
         Dim UserName = Data.UserName
         Dim ApiKey = Data.ApiKey
 
