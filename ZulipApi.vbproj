@@ -67,6 +67,7 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiResult.vb" />
     <Compile Include="Client.vb" />
     <Compile Include="Constants.vb" />
     <Compile Include="Helpers\Assert.vb" />

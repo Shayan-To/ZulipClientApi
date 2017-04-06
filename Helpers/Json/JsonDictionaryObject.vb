@@ -21,6 +21,14 @@
         End Get
     End Property
 
+    Public ReadOnly Property ItemOrDefault(Key As String) As JsonObject
+        Get
+            Dim Value As JsonObject = Nothing
+            Me.TryGetValue(Key, Value)
+            Return Value
+        End Get
+    End Property
+
     Public ReadOnly Property Keys As IEnumerable(Of String) Implements IReadOnlyDictionary(Of String, JsonObject).Keys
         Get
             Return Me.List.Select(Function(KV) KV.Key)

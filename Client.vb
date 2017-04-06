@@ -6,6 +6,10 @@ Public Class Client
         Me._RealmAddress = RealmAddress
     End Sub
 
+    Private Sub VerifyLoggedIn()
+        Verify.True(Me.IsLoggedIn, $"`{NameOf(Client)}` must be logged in first to do this. Use `{NameOf(Me.LoginAsync)}` method.")
+    End Sub
+
     Private Function ParametersGoInBody(ByVal HttpMethod As HttpMethod) As Boolean
         Return HttpMethod = HttpMethod.Post
     End Function
@@ -13,22 +17,24 @@ Public Class Client
     Private Async Function RunApi(ByVal EndPoint As EndPoint,
                                   ByVal HttpMethod As HttpMethod,
                                   ByVal Parameters As IEnumerable(Of Parameter),
-                                  Optional ByVal UseAutentication As Boolean = True) As Task(Of JsonObject)
+                                  Optional ByVal UseAutentication As Boolean = True) As Task(Of JsonDictionaryObject)
         Dim Url = $"{Me.RealmAddress}/{RelativeBaseApiAddress}/{Constants.EndPoints(EndPoint)}"
 
         Dim QueryParamsBuilder = Me.StringBuilder.Value
-        Dim Bl = False
-        For Each P In Parameters
-            If Bl Then
-                QueryParamsBuilder.Append("&"c)
-            End If
-            Bl = True
-            QueryParamsBuilder.Append(P.Key).Append("="c).Append(P.Value)
-        Next
+        If Parameters IsNot Nothing Then
+            Dim Bl = False
+            For Each P In Parameters
+                If Bl Then
+                    QueryParamsBuilder.Append("&"c)
+                End If
+                Bl = True
+                QueryParamsBuilder.Append(Net.WebUtility.UrlEncode(P.Key)).Append("="c).Append(Net.WebUtility.UrlEncode(P.Value))
+            Next
+        End If
         Dim QueryParams = QueryParamsBuilder.ToString()
         QueryParamsBuilder.Clear()
 
-        If Bl And Not Me.ParametersGoInBody(HttpMethod) Then
+        If QueryParams.Length <> 0 And Not Me.ParametersGoInBody(HttpMethod) Then
             Url &= "?" & QueryParamsBuilder.ToString()
         End If
 
@@ -40,6 +46,8 @@ Public Class Client
         End If
 
         If Me.ParametersGoInBody(HttpMethod) Then
+            Request.ContentType = Constants.ContentType_FormUrlEncoded
+
             Using ReqStream = Await Request.GetRequestStreamAsync(),
                   Writer = New IO.StreamWriter(ReqStream, Text.Encoding.UTF8)
                 Await Writer.WriteAsync(QueryParams)
@@ -50,12 +58,39 @@ Public Class Client
               ResponseStream = Await Response.GetResponseStreamAsync(),
               Reader = New IO.StreamReader(ResponseStream, Text.Encoding.UTF8)
             Dim Json = Await Reader.ReadToEndAsync()
-            Return Me.JsonParser.Value.Parse(Json)
+
+            Dim Res As JsonDictionaryObject = Nothing
+            Dim ApiResult As String = Nothing
+            Try
+                Res = Me.JsonParser.Value.Parse(Json).AsDictionary()
+                Res.Item(Constants.Common.Output_Result).AsValue().VerifyEnum(Constants.ApiResults)
+                Res.Item(Constants.Common.Output_Message).AsValue().VerifyString()
+            Catch ex As Exception
+                Verify.Fail("Invalid response.", ex)
+            End Try
+
+            ApiResult = Res.Item(Constants.Common.Output_Result).AsValue().VerifyString().Value
+            If ApiResult = Constants.ApiResults(Zulip.ApiResult.Error) Then
+                Dim Reason As JsonValueObject = Nothing
+                Try
+                    Reason = Res.ItemOrDefault(Constants.Common.Output_Reason).AsValue().VerifyString()
+                Catch ex As Exception
+                    Verify.Fail("Invalid response.", ex)
+                End Try
+
+                If Reason IsNot Nothing Then
+                    Verify.Fail($"API returned an error ({Reason.Value}). {Res.Item(Constants.Common.Output_Message).AsValue().Value}")
+                Else
+                    Verify.Fail($"API returned an error. {Res.Item(Constants.Common.Output_Message).AsValue().Value}")
+                End If
+            End If
+
+            Return Res
         End Using
     End Function
 
     Public Async Function LoginAsync(ByVal LoginData As LoginData) As Task
-        Verify.False(Me.IsLoggedIn, $"A single instance of `{NameOf(Client)}` cannot login two times.")
+        Verify.False(Me.IsLoggedIn, $"A single instance of `{NameOf(Client)}` cannot log-in two times.")
 
         Dim UserName = LoginData.UserName
         Dim ApiKey = LoginData.ApiKey
@@ -63,7 +98,7 @@ Public Class Client
         If LoginData.Method = LoginMethod.Password Then
             Dim T = Await Me.RunApi(EndPoint.FetchApiKey, HttpMethod.Post, LoginData.GetDataForFetchApiKey(), False)
             Try
-                ApiKey = T.AsDictionary().Item(Constants.FetchApiKey.Output_ApiKey).AsValue().VerifyString().Value
+                ApiKey = T.Item(Constants.FetchApiKey.Output_ApiKey).AsValue().VerifyString().Value
             Catch ex As Exception
                 Verify.Fail("Invalid response.", ex)
             End Try
@@ -74,11 +109,9 @@ Public Class Client
 
         Dim Auth = $"{Me.UserName}:{Me.ApiKey}"
         Me.AuthHeader = "Basic " & Convert.ToBase64String(Text.Encoding.UTF8.GetBytes(Auth))
-    End Function
 
-    Private Sub VerifyLoggedIn()
-        Verify.True(Me.IsLoggedIn, $"`{NameOf(Client)}` must be logged in first to do this. Use `{NameOf(Me.LoginAsync)}` method.")
-    End Sub
+        Me._IsLoggedIn = True
+    End Function
 
 #Region "UserName Read-Only Property"
     Private _UserName As String
