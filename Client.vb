@@ -3,6 +3,11 @@
 Public Class Client
 
     Public Sub New(ByVal RealmAddress As String)
+        If RealmAddress.EndsWith("/") Then
+            RealmAddress = RealmAddress.Substring(0, RealmAddress.Length - 1)
+            Verify.FalseArg(RealmAddress.EndsWith("/"), NameOf(RealmAddress), "Invalid URL.")
+        End If
+
         Me._RealmAddress = RealmAddress
     End Sub
 
