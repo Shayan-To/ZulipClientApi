@@ -135,7 +135,7 @@ Public Class Client
             Dim M As JsonDictionaryObject = Nothing
             Try
                 M = Members.Item(I).AsDictionary()
-                M.Item(Constants.Users.Output_Members_UserId).AsValue().VerifyInteger()
+                'M.Item(Constants.Users.Output_Members_UserId).AsValue().VerifyInteger()
                 M.Item(Constants.Users.Output_Members_FullName).AsValue().VerifyString()
                 M.Item(Constants.Users.Output_Members_Email).AsValue().VerifyString()
                 M.Item(Constants.Users.Output_Members_IsActive).AsValue().VerifyBoolean()
@@ -150,7 +150,7 @@ Public Class Client
 
             Dim U = New User()
             With U
-                .Id = Integer.Parse(M.Item(Constants.Users.Output_Members_UserId).AsValue().Value)
+                '.Id = Integer.Parse(M.Item(Constants.Users.Output_Members_UserId).AsValue().Value)
                 .FullName = M.Item(Constants.Users.Output_Members_FullName).AsValue().Value
                 .Email = M.Item(Constants.Users.Output_Members_Email).AsValue().Value
                 .IsActive = M.Item(Constants.Users.Output_Members_IsActive).AsValue().Value = Constants.True
