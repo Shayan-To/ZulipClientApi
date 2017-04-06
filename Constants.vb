@@ -56,4 +56,25 @@
 
     End Class
 
+    Public Class Streams
+
+        Private Sub New()
+            Throw New NotSupportedException()
+        End Sub
+
+        Public Const Input_IncludePublic = "include_public"
+        Public Const Input_IncludeSubscribed = "include_subscribed"
+        Public Const Input_IncludeAllActive = "include_all_active"
+        Public Const Input_IncludeDefault = "include_default"
+
+        Public Const Output_Streams = "streams"
+        Public Const Output_Streams_StreamId = "stream_id"
+        Public Const Output_Streams_InviteOnly = "invite_only"
+        Public Const Output_Streams_Description = "description"
+        Public Const Output_Streams_Name = "name"
+        ''' <summary>If IncludeDefault</summary>
+        Public Const Output_Streams_IsDefault = "is_default"
+
+    End Class
+
 End Class

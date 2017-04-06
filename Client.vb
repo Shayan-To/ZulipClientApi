@@ -165,12 +165,62 @@
         Return Res.AsReadOnly()
     End Function
 
+    Private Async Function RetrieveStreams(ByVal Data As StreamsRetrieveData) As Task(Of SimpleDictionary(Of Integer, Stream))
+        Me.VerifyLoggedIn()
+
+        Data = Data.Fix()
+
+        Dim R = Await Me.RunApi(EndPoint.Streams, HttpMethod.Get, Data.GetDataForRetrieveStreams())
+        Dim Streams As JsonListObject = Nothing
+        Try
+            Streams = R.Item(Constants.Streams.Output_Streams).AsList()
+        Catch ex As Exception
+            Verify.Fail("Invalid response.", ex)
+        End Try
+
+        Dim Res = New KeyValuePair(Of Integer, Stream)(Streams.Count - 1) {}
+
+        For I = 0 To Streams.Count - 1
+            Dim S = New Stream()
+
+            Try
+                Dim T = Streams.Item(I).AsDictionary()
+                With S
+                    .Id = T.Item(Constants.Streams.Output_Streams_StreamId).GetInteger()
+                    .Name = T.Item(Constants.Streams.Output_Streams_Name).GetString()
+                    .Description = T.Item(Constants.Streams.Output_Streams_Description).GetString()
+                    .IsInviteOnly = T.Item(Constants.Streams.Output_Streams_InviteOnly).GetBoolean()
+                    If Data.IncludeDefault Then
+                        '.IsDefault = T.Item(Constants.Streams.Output_Streams_IsDefault).GetBoolean()
+                    End If
+                End With
+            Catch ex As Exception
+                Verify.Fail("Invalid response.", ex)
+            End Try
+
+            S.Freeze()
+            Res(I) = New KeyValuePair(Of Integer, Stream)(S.Id, S)
+        Next
+
+        Return New SimpleDictionary(Of Integer, Stream)(Res)
+    End Function
+
 #Region "Users Property"
     Private _Users As RetrievableData(Of IReadOnlyList(Of User)) = New RetrievableData(Of IReadOnlyList(Of User))(AddressOf Me.RetrieveUsers, Sub(V) Me._Users = V)
 
     Public ReadOnly Property Users As RetrievableData(Of IReadOnlyList(Of User))
         Get
             Return Me._Users
+        End Get
+    End Property
+#End Region
+
+#Region "Streams Read-Only Property"
+    Private _Streams As RetrievableData(Of SimpleDictionary(Of Integer, Stream), StreamsRetrieveData) = New RetrievableData(Of SimpleDictionary(Of Integer, Stream), StreamsRetrieveData)(AddressOf Me.RetrieveStreams, Sub(V) Me._Streams = V)
+
+    Public ReadOnly Property Streams As RetrievableData(Of SimpleDictionary(Of Integer, Stream), StreamsRetrieveData)
+        Get
+            Return Me._Streams
         End Get
     End Property
 #End Region
