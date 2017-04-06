@@ -51,7 +51,7 @@
         Public Const Output_Members_IsActive = "is_active"
         Public Const Output_Members_IsAdmin = "is_admin"
         Public Const Output_Members_AvatarUrl = "avatar_url"
-        ''' <summary>Optional</summary>
+        ''' <summary>If IsBot</summary>
         Public Const Output_Members_BotOwner = "bot_owner"
 
     End Class

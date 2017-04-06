@@ -92,14 +92,14 @@
         End Using
     End Function
 
-    Public Async Function LoginAsync(ByVal LoginData As LoginData) As Task
+    Public Async Function LoginAsync(ByVal Data As LoginData) As Task
         Verify.False(Me.IsLoggedIn, $"A single instance of `{NameOf(Client)}` cannot log-in two times.")
 
-        Dim UserName = LoginData.UserName
-        Dim ApiKey = LoginData.ApiKey
+        Dim UserName = Data.UserName
+        Dim ApiKey = Data.ApiKey
 
-        If LoginData.Method = LoginMethod.Password Then
-            Dim T = Await Me.RunApi(EndPoint.FetchApiKey, HttpMethod.Post, LoginData.GetDataForFetchApiKey(), False)
+        If Data.Method = LoginMethod.Password Then
+            Dim T = Await Me.RunApi(EndPoint.FetchApiKey, HttpMethod.Post, Data.GetDataForFetchApiKey(), False)
             Try
                 ApiKey = T.Item(Constants.FetchApiKey.Output_ApiKey).AsValue().VerifyString().Value
             Catch ex As Exception
