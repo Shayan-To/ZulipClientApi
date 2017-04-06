@@ -82,6 +82,7 @@
     <Compile Include="Helpers\Json\JsonValueObject.vb" />
     <Compile Include="Helpers\Json\JsonWriter.vb" />
     <Compile Include="Helpers\SimpleDictionary.vb" />
+    <Compile Include="Helpers\Utilities.vb" />
     <Compile Include="Helpers\VTuple.vb" />
     <Compile Include="LoginData.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

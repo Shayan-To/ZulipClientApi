@@ -49,14 +49,14 @@ Public Class Client
             Request.ContentType = Constants.ContentType_FormUrlEncoded
 
             Using ReqStream = Await Request.GetRequestStreamAsync(),
-                  Writer = New IO.StreamWriter(ReqStream, Text.Encoding.UTF8)
+                  Writer = New IO.StreamWriter(ReqStream, Utilities.Utf8NoBomEncoding)
                 Await Writer.WriteAsync(QueryParams)
             End Using
         End If
 
         Using Response = Await Request.GetResponseAsync(),
               ResponseStream = Await Response.GetResponseStreamAsync(),
-              Reader = New IO.StreamReader(ResponseStream, Text.Encoding.UTF8)
+              Reader = New IO.StreamReader(ResponseStream, Utilities.Utf8NoBomEncoding)
             Dim Json = Await Reader.ReadToEndAsync()
 
             Dim Res As JsonDictionaryObject = Nothing
@@ -108,7 +108,7 @@ Public Class Client
         Me._ApiKey = ApiKey
 
         Dim Auth = $"{Me.UserName}:{Me.ApiKey}"
-        Me.AuthHeader = "Basic " & Convert.ToBase64String(Text.Encoding.UTF8.GetBytes(Auth))
+        Me.AuthHeader = "Basic " & Convert.ToBase64String(Utilities.Utf8NoBomEncoding.GetBytes(Auth))
 
         Me._IsLoggedIn = True
     End Function
