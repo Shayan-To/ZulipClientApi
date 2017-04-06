@@ -1,9 +1,9 @@
 ﻿Public Structure LoginData
 
-    Friend Function GetDataForFetchApiKey() As KeyValuePair(Of String, String)()
-        Return New KeyValuePair(Of String, String)() {
-                   New KeyValuePair(Of String, String)(Constants.FetchApiKey.Input_UserName, Me.UserName),
-                   New KeyValuePair(Of String, String)(Constants.FetchApiKey.Input_Password, Me.Password)
+    Friend Function GetDataForFetchApiKey() As Parameter()
+        Return New Parameter() {
+                   New Parameter(Constants.FetchApiKey.Input_UserName, Me.UserName),
+                   New Parameter(Constants.FetchApiKey.Input_Password, Me.Password)
                }
     End Function
 

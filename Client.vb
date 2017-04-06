@@ -1,6 +1,4 @@
-﻿Imports Parameter = System.Collections.Generic.KeyValuePair(Of String, String)
-
-Public Class Client
+﻿Public Class Client
 
     Public Sub New(ByVal RealmAddress As String)
         If RealmAddress.EndsWith("/") Then
