@@ -63,28 +63,28 @@
             Dim Json = Await Reader.ReadToEndAsync()
 
             Dim Res As JsonDictionaryObject = Nothing
-            Dim ApiResult As String = Nothing
+            Dim ApiResult As ApiResult = Nothing
+            Dim Message As String = Nothing
             Try
                 Res = Me.JsonParser.Value.Parse(Json).AsDictionary()
-                Res.Item(Constants.Common.Output_Result).AsValue().VerifyEnum(Constants.ApiResults)
-                Res.Item(Constants.Common.Output_Message).AsValue().VerifyString()
+                ApiResult = DirectCast(Res.Item(Constants.Common.Output_Result).GetEnum(Constants.ApiResults), ApiResult)
+                Message = Res.Item(Constants.Common.Output_Message).GetString()
             Catch ex As Exception
                 Verify.Fail("Invalid response.", ex)
             End Try
 
-            ApiResult = Res.Item(Constants.Common.Output_Result).AsValue().VerifyString().Value
-            If ApiResult = Constants.ApiResults(Zulip.ApiResult.Error) Then
-                Dim Reason As JsonValueObject = Nothing
+            If ApiResult = ApiResult.Error Then
+                Dim Reason As String = Nothing
                 Try
-                    Reason = Res.ItemOrDefault(Constants.Common.Output_Reason).AsValue().VerifyString()
+                    Reason = Res.ItemOrDefault(Constants.Common.Output_Reason)?.GetString()
                 Catch ex As Exception
                     Verify.Fail("Invalid response.", ex)
                 End Try
 
                 If Reason IsNot Nothing Then
-                    Verify.Fail($"API returned an error ({DirectCast(Response.StatusCode, Integer)} - {Response.StatusDescription}).{Environment.NewLine}Reason: {Reason.Value}{Environment.NewLine}Message: {Res.Item(Constants.Common.Output_Message).AsValue().Value}")
+                    Verify.Fail($"API returned an error ({DirectCast(Response.StatusCode, Integer)} - {Response.StatusDescription}).{Environment.NewLine}Reason: {Reason}{Environment.NewLine}Message: {Message}")
                 Else
-                    Verify.Fail($"API returned an error ({DirectCast(Response.StatusCode, Integer)} - {Response.StatusDescription}).{Environment.NewLine}Message: {Res.Item(Constants.Common.Output_Message).AsValue().Value}")
+                    Verify.Fail($"API returned an error ({DirectCast(Response.StatusCode, Integer)} - {Response.StatusDescription}).{Environment.NewLine}Message: {Message}")
                 End If
             End If
 
@@ -105,7 +105,8 @@
         If Data.Method = LoginMethod.Password Then
             Dim T = Await Me.RunApi(EndPoint.FetchApiKey, HttpMethod.Post, Data.GetDataForFetchApiKey(), False)
             Try
-                ApiKey = T.Item(Constants.FetchApiKey.Output_ApiKey).AsValue().VerifyString().Value
+                ApiKey = T.Item(Constants.FetchApiKey.Output_ApiKey).GetString()
+                T.Item(Constants.FetchApiKey.Output_Email).GetString()
             Catch ex As Exception
                 Verify.Fail("Invalid response.", ex)
             End Try
@@ -135,38 +136,27 @@
         Dim Res = New User(Members.Count - 1) {}
 
         For I = 0 To Members.Count - 1
-            Dim M As JsonDictionaryObject = Nothing
+            Dim U = New User()
+
             Try
-                M = Members.Item(I).AsDictionary()
-                'M.Item(Constants.Users.Output_Members_UserId).AsValue().VerifyInteger()
-                M.Item(Constants.Users.Output_Members_FullName).AsValue().VerifyString()
-                M.Item(Constants.Users.Output_Members_Email).AsValue().VerifyString()
-                M.Item(Constants.Users.Output_Members_IsActive).AsValue().VerifyBoolean()
-                M.Item(Constants.Users.Output_Members_IsAdmin).AsValue().VerifyBoolean()
-                M.Item(Constants.Users.Output_Members_AvatarUrl).AsValue().VerifyString()
-                If M.Item(Constants.Users.Output_Members_IsBot).AsValue().VerifyBoolean().Value = Constants.True Then
-                    M.Item(Constants.Users.Output_Members_BotOwner).AsValue().VerifyString()
-                End If
+                Dim T = Members.Item(I).AsDictionary()
+                With U
+                    '.Id = T.Item(Constants.Users.Output_Members_UserId).GetInteger()
+                    .FullName = T.Item(Constants.Users.Output_Members_FullName).GetString()
+                    .Email = T.Item(Constants.Users.Output_Members_Email).GetString()
+                    .IsActive = T.Item(Constants.Users.Output_Members_IsActive).GetBoolean()
+                    .IsAdmin = T.Item(Constants.Users.Output_Members_IsAdmin).GetBoolean()
+                    .AvatarUrl = T.Item(Constants.Users.Output_Members_AvatarUrl).GetString()
+                    .IsBot = T.Item(Constants.Users.Output_Members_IsBot).GetBoolean()
+                    If .IsBot Then
+                        .BotOwnerEmail = T.Item(Constants.Users.Output_Members_BotOwner).GetString()
+                    End If
+                End With
             Catch ex As Exception
                 Verify.Fail("Invalid response.", ex)
             End Try
 
-            Dim U = New User()
-            With U
-                '.Id = Integer.Parse(M.Item(Constants.Users.Output_Members_UserId).AsValue().Value)
-                .FullName = M.Item(Constants.Users.Output_Members_FullName).AsValue().Value
-                .Email = M.Item(Constants.Users.Output_Members_Email).AsValue().Value
-                .IsActive = M.Item(Constants.Users.Output_Members_IsActive).AsValue().Value = Constants.True
-                .IsAdmin = M.Item(Constants.Users.Output_Members_IsAdmin).AsValue().Value = Constants.True
-                .AvatarUrl = M.Item(Constants.Users.Output_Members_AvatarUrl).AsValue().Value
-                .IsBot = M.Item(Constants.Users.Output_Members_IsBot).AsValue().Value = Constants.True
-                If .IsBot Then
-                    .BotOwnerEmail = M.Item(Constants.Users.Output_Members_BotOwner).AsValue().Value
-                End If
-
-                .Freeze()
-            End With
-
+            U.Freeze()
             'Res(I) = New KeyValuePair(Of Integer, User)(U.Id, U)
             Res(I) = U
         Next

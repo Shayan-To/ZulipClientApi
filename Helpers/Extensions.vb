@@ -41,69 +41,75 @@
     End Function
 
     <Extension()>
-    Public Function VerifyString(ByVal Self As JsonValueObject) As JsonValueObject
-        If Self IsNot Nothing Then
-#If Not RelaxedStrings Then
-            Verify.True(Self.IsString, "Value must be a string.")
-#End If
-        End If
-        Return Self
-    End Function
+    Public Function GetString(ByVal Self As JsonObject) As String
+        Assert.False(Self Is Nothing)
+        Verify.True(TypeOf Self Is JsonValueObject, "A string value was expected, not a list or dictionary.")
+        Dim V = Self.AsValue()
 
-    <Extension(), Obsolete()>
-    Public Function VerifyNotString(ByVal Self As JsonValueObject) As JsonValueObject
-        If Self IsNot Nothing Then
 #If Not RelaxedStrings Then
-            Verify.False(Self.IsString, "Value must not be a string.")
+        Verify.True(V.IsString, "Value must be a string.")
 #End If
-        End If
-        Return Self
+
+        Return V.Value
     End Function
 
     <Extension()>
-    Public Function VerifyBoolean(ByVal Self As JsonValueObject) As JsonValueObject
-        If Self IsNot Nothing Then
+    Public Function GetBoolean(ByVal Self As JsonObject) As Boolean
+        Assert.False(Self Is Nothing)
+        Verify.True(TypeOf Self Is JsonValueObject, "A boolean value was expected, not a list or dictionary.")
+        Dim V = Self.AsValue()
+
 #If Not RelaxedStrings Then
-            Verify.False(Self.IsString, "Value must be a boolean.")
+        Verify.False(V.IsString, "Value must be a boolean.")
 #End If
-            Verify.True(Self.Value = Constants.True Or Self.Value = Constants.False, "Value must be a boolean.")
-        End If
-        Return Self
+
+        Verify.True(V.Value = Constants.True Or V.Value = Constants.False, "Value must be a boolean.")
+        Return V.Value = Constants.True
     End Function
 
     <Extension()>
-    Public Function VerifyInteger(ByVal Self As JsonValueObject) As JsonValueObject
-        If Self IsNot Nothing Then
+    Public Function GetInteger(ByVal Self As JsonObject) As Integer
+        Assert.False(Self Is Nothing)
+        Verify.True(TypeOf Self Is JsonValueObject, "An integer value was expected, not a list or dictionary.")
+        Dim V = Self.AsValue()
+
 #If Not RelaxedStrings Then
-            Verify.False(Self.IsString, "Value must be an integer.")
+        Verify.False(V.IsString, "Value must be an integer.")
 #End If
-            Dim T = 0
-            Verify.True(Integer.TryParse(Self.Value, T), "Value must be an integer.")
-        End If
-        Return Self
+
+        Dim T = 0
+        Verify.True(Integer.TryParse(V.Value, T), "Value must be an integer.")
+        Return T
     End Function
 
     <Extension()>
-    Public Function VerifyDouble(ByVal Self As JsonValueObject) As JsonValueObject
-        If Self IsNot Nothing Then
+    Public Function GetDouble(ByVal Self As JsonObject) As Double
+        Assert.False(Self Is Nothing)
+        Verify.True(TypeOf Self Is JsonValueObject, "A number value was expected, not a list or dictionary.")
+        Dim V = Self.AsValue()
+
 #If Not RelaxedStrings Then
-            Verify.False(Self.IsString, "Value must be a number.")
+        Verify.False(V.IsString, "Value must be a number.")
 #End If
-            Dim T = 0.0
-            Verify.True(Double.TryParse(Self.Value, T), "Value must be a number.")
-        End If
-        Return Self
+
+        Dim T = 0.0
+        Verify.True(Double.TryParse(V.Value, T), "Value must be a number.")
+        Return T
     End Function
 
     <Extension()>
-    Public Function VerifyEnum(ByVal Self As JsonValueObject, ByVal Values As String()) As JsonValueObject
-        If Self IsNot Nothing Then
+    Public Function GetEnum(ByVal Self As JsonObject, ByVal Values As String()) As Integer
+        Assert.False(Self Is Nothing)
+        Verify.True(TypeOf Self Is JsonValueObject, "A string value was expected, not a list or dictionary.")
+        Dim V = Self.AsValue()
+
 #If Not RelaxedStrings Then
-            Verify.True(Self.IsString, "Value must be a string.")
+        Verify.True(V.IsString, "Value must be a string.")
 #End If
-            Verify.True(Array.IndexOf(Values, Self.Value) <> -1, "Value must be from within the predefined values.")
-        End If
-        Return Self
+
+        Dim I = Array.IndexOf(Values, V.Value)
+        Verify.True(I <> -1, "Value must be from within the predefined values.")
+        Return I
     End Function
 
     <Extension()>
@@ -112,7 +118,7 @@
     End Function
 
     Private Function LeastPowerOfTwoOnMin(ByVal Min As Integer) As Integer
-        If Min < 1 Then
+        If Min <1 Then
             Return 1
         End If
 
