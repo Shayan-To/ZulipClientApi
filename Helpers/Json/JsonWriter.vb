@@ -8,10 +8,10 @@
             Dim ECh = Ch
             If EscapeDic.TryGetValue(Ch, ECh) Then
                 Me.Builder.Append(S, PrevStart, I - PrevStart).Append("\"c).Append(ECh)
-                PrevStart = I
+                PrevStart = I + 1
             ElseIf Char.IsControl(Ch) Then
                 Me.Builder.Append(S, PrevStart, I - PrevStart).Append("\u").Append(Convert.ToString(Strings.AscW(Ch), 16).PadLeft(4, "0"c))
-                PrevStart = I
+                PrevStart = I + 1
             End If
         Next
 

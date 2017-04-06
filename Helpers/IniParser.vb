@@ -111,15 +111,13 @@
                 If Me.Input(I) = "x"c Then
                     Res.Append(Me.GetCharFromHex(I + 1))
                     I += 4
-
-                    Continue For
+                Else
+                    Dim Ch As Char = Nothing
+                    Verify.True(EscapeDic.TryGetValue(Me.Input(I), Ch), "Invalid INI format. Invalid escape sequence.")
+                    Res.Append(Ch)
                 End If
 
-                Dim Ch As Char = Nothing
-                Verify.True(EscapeDic.TryGetValue(Me.Input(I), Ch), "Invalid INI format. Invalid escape sequence.")
-                Res.Append(Ch)
-
-                PrevStart = I
+                PrevStart = I + 1
 
                 Continue For
             End If

@@ -26,15 +26,16 @@
             Dim List = New List(Of KeyValuePair(Of String, JsonObject))()
 
             Do
-                Dim Key = Me.ReadToken()
+                Token = Me.ReadToken()
                 Verify.True(Token.Type = TokenType.QuotedValue, "Invalid JSON format. Key must be a string.")
+                Dim Key = Token.Value
 
-                Dim T = Me.ReadToken()
+                Token = Me.ReadToken()
                 Verify.True(Token.Type = TokenType.Operator And Token.Value = ":", "Invalid JSON format. Expected ':'.")
 
-                List.Add(New KeyValuePair(Of String, JsonObject)(Key.Value, Me.Parse()))
+                List.Add(New KeyValuePair(Of String, JsonObject)(Key, Me.Parse()))
 
-                T = Me.ReadToken()
+                Token = Me.ReadToken()
                 Verify.True(Token.Type = TokenType.Operator And (Token.Value = "," Or Token.Value = "}"), "Invalid JSON format. Expected ',' or '}'.")
 
                 If Token.Value = "}" Then
@@ -49,7 +50,7 @@
             Do
                 List.Add(Me.Parse())
 
-                Dim T = Me.ReadToken()
+                Token = Me.ReadToken()
                 Verify.True(Token.Type = TokenType.Operator And (Token.Value = "," Or Token.Value = "]"), "Invalid JSON format. Expected ',' or ']'.")
 
                 If Token.Value = "]" Then
@@ -87,7 +88,7 @@
 
         Assert.True(Me.Input(Me.Index) = """"c)
 
-        Dim PrevStart = Me.Index
+        Dim PrevStart = Me.Index + 1
         For I = Me.Index + 1 To Me.Input.Length - 1
             If Me.Input(I) = """"c Then
                 Res.Append(Me.Input, PrevStart, I - PrevStart)
@@ -104,15 +105,13 @@
                 If Me.Input(I) = "u"c Then
                     Res.Append(Me.GetCharFromHex(I + 1))
                     I += 4
-
-                    Continue For
+                Else
+                    Dim Ch As Char = Nothing
+                    Verify.True(EscapeDic.TryGetValue(Me.Input(I), Ch), "Invalid JSON format. Invalid escape sequence.")
+                    Res.Append(Ch)
                 End If
 
-                Dim Ch As Char = Nothing
-                Verify.True(EscapeDic.TryGetValue(Me.Input(I), Ch), "Invalid JSON format. Invalid escape sequence.")
-                Res.Append(Ch)
-
-                PrevStart = I
+                PrevStart = I + 1
 
                 Continue For
             End If
