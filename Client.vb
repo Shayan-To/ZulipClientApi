@@ -79,9 +79,9 @@ Public Class Client
                 End Try
 
                 If Reason IsNot Nothing Then
-                    Verify.Fail($"API returned an error ({Reason.Value}). {Res.Item(Constants.Common.Output_Message).AsValue().Value}")
+                    Verify.Fail($"API returned an error ({DirectCast(Response.StatusCode, Integer)} - {Response.StatusDescription}).{Environment.NewLine}Reason: {Reason.Value}{Environment.NewLine}Message: {Res.Item(Constants.Common.Output_Message).AsValue().Value}")
                 Else
-                    Verify.Fail($"API returned an error. {Res.Item(Constants.Common.Output_Message).AsValue().Value}")
+                    Verify.Fail($"API returned an error ({DirectCast(Response.StatusCode, Integer)} - {Response.StatusDescription}).{Environment.NewLine}Message: {Res.Item(Constants.Common.Output_Message).AsValue().Value}")
                 End If
             End If
 

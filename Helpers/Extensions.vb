@@ -10,7 +10,13 @@
     <Extension()>
     Public Async Function GetResponseAsync(ByVal Self As Net.HttpWebRequest) As Task(Of Net.HttpWebResponse)
         Dim Res = New TaskCompletionSource(Of Net.HttpWebResponse)()
-        Await Task.Run(Sub() Self.BeginGetResponse(Sub(Ar) Res.SetResult(DirectCast(Self.EndGetResponse(Ar), Net.HttpWebResponse)), Nothing))
+        Await Task.Run(Sub() Self.BeginGetResponse(Sub(Ar)
+                                                       Try
+                                                           Res.SetResult(DirectCast(Self.EndGetResponse(Ar), Net.HttpWebResponse))
+                                                       Catch ex As Net.WebException
+                                                           Res.SetResult(DirectCast(ex.Response, Net.HttpWebResponse))
+                                                       End Try
+                                                   End Sub, Nothing))
         Return Await Res.Task
     End Function
 
