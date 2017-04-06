@@ -89,6 +89,7 @@
     <Compile Include="EndPoint.vb" />
     <Compile Include="Helpers\Verify.vb" />
     <Compile Include="RetrievableData.vb" />
+    <Compile Include="User.vb" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.VisualBasic.targets" />
 </Project>

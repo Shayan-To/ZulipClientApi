@@ -37,4 +37,23 @@
 
     End Class
 
+    Public Class Users
+
+        Private Sub New()
+            Throw New NotSupportedException()
+        End Sub
+
+        Public Const Output_Members = "members"
+        Public Const Output_Members_UserId = "user_id"
+        Public Const Output_Members_FullName = "full_name"
+        Public Const Output_Members_Email = "email"
+        Public Const Output_Members_IsBot = "is_bot"
+        Public Const Output_Members_IsActive = "is_active"
+        Public Const Output_Members_IsAdmin = "is_admin"
+        Public Const Output_Members_AvatarUrl = "avatar_url"
+        ''' <summary>Optional</summary>
+        Public Const Output_Members_BotOwner = "bot_owner"
+
+    End Class
+
 End Class

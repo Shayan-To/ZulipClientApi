@@ -113,6 +113,68 @@ Public Class Client
         Me._IsLoggedIn = True
     End Function
 
+    Private Async Function RetrieveUsers() As Task(Of SimpleDictionary(Of Integer, User))
+        Me.VerifyLoggedIn()
+
+        Dim R = Await Me.RunApi(EndPoint.Users, HttpMethod.Get, Nothing)
+        Dim Members As JsonListObject = Nothing
+        Try
+            Members = R.Item(Constants.Users.Output_Members).AsList()
+        Catch ex As Exception
+            Verify.Fail("Invalid response.", ex)
+        End Try
+
+        Dim Res = New KeyValuePair(Of Integer, User)(Members.Count - 1) {}
+
+        For I = 0 To Members.Count - 1
+            Dim M As JsonDictionaryObject = Nothing
+            Try
+                M = Members.Item(I).AsDictionary()
+                M.Item(Constants.Users.Output_Members_UserId).AsValue().VerifyInteger()
+                M.Item(Constants.Users.Output_Members_FullName).AsValue().VerifyString()
+                M.Item(Constants.Users.Output_Members_Email).AsValue().VerifyString()
+                M.Item(Constants.Users.Output_Members_IsActive).AsValue().VerifyBoolean()
+                M.Item(Constants.Users.Output_Members_IsAdmin).AsValue().VerifyBoolean()
+                M.Item(Constants.Users.Output_Members_AvatarUrl).AsValue().VerifyString()
+                If M.Item(Constants.Users.Output_Members_IsBot).AsValue().VerifyBoolean().Value = Constants.True Then
+                    M.Item(Constants.Users.Output_Members_BotOwner).AsValue().VerifyString()
+                End If
+            Catch ex As Exception
+                Verify.Fail("Invalid response.", ex)
+            End Try
+
+            Dim U = New User()
+            With U
+                .Id = Integer.Parse(M.Item(Constants.Users.Output_Members_UserId).AsValue().Value)
+                .FullName = M.Item(Constants.Users.Output_Members_FullName).AsValue().Value
+                .Email = M.Item(Constants.Users.Output_Members_Email).AsValue().Value
+                .IsActive = M.Item(Constants.Users.Output_Members_IsActive).AsValue().Value = Constants.True
+                .IsAdmin = M.Item(Constants.Users.Output_Members_IsAdmin).AsValue().Value = Constants.True
+                .AvatarUrl = M.Item(Constants.Users.Output_Members_AvatarUrl).AsValue().Value
+                .IsBot = M.Item(Constants.Users.Output_Members_IsBot).AsValue().Value = Constants.True
+                If .IsBot Then
+                    .BotOwnerEmail = M.Item(Constants.Users.Output_Members_BotOwner).AsValue().Value
+                End If
+
+                .Freeze()
+            End With
+
+            Res(I) = New KeyValuePair(Of Integer, User)(U.Id, U)
+        Next
+
+        Return New SimpleDictionary(Of Integer, User)(Res)
+    End Function
+
+#Region "Users Read-Only Property"
+    Private _Users As RetrievableData(Of SimpleDictionary(Of Integer, User)) = New RetrievableData(Of SimpleDictionary(Of Integer, User))(AddressOf Me.RetrieveUsers)
+
+    Public ReadOnly Property Users As RetrievableData(Of SimpleDictionary(Of Integer, User))
+        Get
+            Return Me._Users
+        End Get
+    End Property
+#End Region
+
 #Region "UserName Read-Only Property"
     Private _UserName As String
 
