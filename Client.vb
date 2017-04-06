@@ -116,7 +116,7 @@
         Me._IsLoggedIn = True
     End Function
 
-    Private Async Function RetrieveUsers() As Task(Of SimpleDictionary(Of Integer, User))
+    Private Async Function RetrieveUsers() As Task(Of IReadOnlyList(Of User)) 'Task(Of SimpleDictionary(Of Integer, User))
         Me.VerifyLoggedIn()
 
         Dim R = Await Me.RunApi(EndPoint.Users, HttpMethod.Get, Nothing)
@@ -127,7 +127,8 @@
             Verify.Fail("Invalid response.", ex)
         End Try
 
-        Dim Res = New KeyValuePair(Of Integer, User)(Members.Count - 1) {}
+        'Dim Res = New KeyValuePair(Of Integer, User)(Members.Count - 1) {}
+        Dim Res = New User(Members.Count - 1) {}
 
         For I = 0 To Members.Count - 1
             Dim M As JsonDictionaryObject = Nothing
@@ -162,16 +163,18 @@
                 .Freeze()
             End With
 
-            Res(I) = New KeyValuePair(Of Integer, User)(U.Id, U)
+            'Res(I) = New KeyValuePair(Of Integer, User)(U.Id, U)
+            Res(I) = U
         Next
 
-        Return New SimpleDictionary(Of Integer, User)(Res)
+        'Return New SimpleDictionary(Of Integer, User)(Res)
+        Return Res.AsReadOnly()
     End Function
 
 #Region "Users Property"
-    Private _Users As RetrievableData(Of SimpleDictionary(Of Integer, User)) = New RetrievableData(Of SimpleDictionary(Of Integer, User))(AddressOf Me.RetrieveUsers, Sub(V) Me._Users = V)
+    Private _Users As RetrievableData(Of IReadOnlyList(Of User)) = New RetrievableData(Of IReadOnlyList(Of User))(AddressOf Me.RetrieveUsers, Sub(V) Me._Users = V)
 
-    Public ReadOnly Property Users As RetrievableData(Of SimpleDictionary(Of Integer, User))
+    Public ReadOnly Property Users As RetrievableData(Of IReadOnlyList(Of User))
         Get
             Return Me._Users
         End Get
