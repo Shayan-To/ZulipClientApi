@@ -27,7 +27,11 @@
 
             Do
                 Token = Me.ReadToken()
+#If RelaxedStrings Then
+                Verify.True((Token.Type And TokenType.Value) = TokenType.Value, "Invalid JSON format. Key must be a value.")
+#Else
                 Verify.True(Token.Type = TokenType.QuotedValue, "Invalid JSON format. Key must be a string.")
+#End If
                 Dim Key = Token.Value
 
                 Token = Me.ReadToken()
