@@ -17,10 +17,10 @@
         Return HttpMethod = HttpMethod.Post
     End Function
 
-    Private Async Function RunApi(ByVal EndPoint As EndPoint,
-                                  ByVal HttpMethod As HttpMethod,
-                                  ByVal Parameters As IEnumerable(Of Parameter),
-                                  Optional ByVal UseAutentication As Boolean = True) As Task(Of JsonDictionaryObject)
+    Private Async Function RunApiAsync(ByVal EndPoint As EndPoint,
+                                       ByVal HttpMethod As HttpMethod,
+                                       ByVal Parameters As IEnumerable(Of Parameter),
+                                       Optional ByVal UseAutentication As Boolean = True) As Task(Of JsonDictionaryObject)
         Dim Url = $"{Me.RealmAddress}/{RelativeBaseApiAddress}/{Constants.EndPoints(EndPoint)}"
 
         Dim QueryParamsBuilder = Me.StringBuilder.Value
@@ -103,7 +103,7 @@
         Dim ApiKey = Data.ApiKey
 
         If Data.Method = LoginMethod.Password Then
-            Dim T = Await Me.RunApi(EndPoint.FetchApiKey, HttpMethod.Post, Data.GetDataForFetchApiKey(), False)
+            Dim T = Await Me.RunApiAsync(EndPoint.FetchApiKey, HttpMethod.Post, Data.GetDataForFetchApiKey(), False)
             Try
                 ApiKey = T.Item(Constants.FetchApiKey.Output_ApiKey).GetString()
                 T.Item(Constants.FetchApiKey.Output_Email).GetString()
@@ -121,10 +121,10 @@
         Me._IsLoggedIn = True
     End Function
 
-    Private Async Function RetrieveUsers() As Task(Of IReadOnlyList(Of User)) 'Task(Of SimpleDictionary(Of Integer, User))
+    Private Async Function RetrieveUsersAsync() As Task(Of IReadOnlyList(Of User)) 'Task(Of SimpleDictionary(Of Integer, User))
         Me.VerifyLoggedIn()
 
-        Dim R = Await Me.RunApi(EndPoint.Users, HttpMethod.Get, Nothing)
+        Dim R = Await Me.RunApiAsync(EndPoint.Users, HttpMethod.Get, Nothing)
         Dim Members As JsonListObject = Nothing
         Try
             Members = R.Item(Constants.Users.Output_Members).AsList()
@@ -165,12 +165,12 @@
         Return Res.AsReadOnly()
     End Function
 
-    Private Async Function RetrieveStreams(ByVal Data As StreamsRetrieveData) As Task(Of SimpleDictionary(Of Integer, Stream))
+    Private Async Function RetrieveStreamsAsync(ByVal Data As StreamsRetrieveData) As Task(Of SimpleDictionary(Of Integer, Stream))
         Me.VerifyLoggedIn()
 
         Data = Data.Fix()
 
-        Dim R = Await Me.RunApi(EndPoint.Streams, HttpMethod.Get, Data.GetDataForRetrieveStreams())
+        Dim R = Await Me.RunApiAsync(EndPoint.Streams, HttpMethod.Get, Data.GetDataForRetrieveStreams())
         Dim Streams As JsonListObject = Nothing
         Try
             Streams = R.Item(Constants.Streams.Output_Streams).AsList()
@@ -206,7 +206,7 @@
     End Function
 
 #Region "Users Property"
-    Private _Users As RetrievableData(Of IReadOnlyList(Of User)) = New RetrievableData(Of IReadOnlyList(Of User))(AddressOf Me.RetrieveUsers, Sub(V) Me._Users = V)
+    Private _Users As RetrievableData(Of IReadOnlyList(Of User)) = New RetrievableData(Of IReadOnlyList(Of User))(AddressOf Me.RetrieveUsersAsync, Sub(V) Me._Users = V)
 
     Public ReadOnly Property Users As RetrievableData(Of IReadOnlyList(Of User))
         Get
@@ -216,7 +216,7 @@
 #End Region
 
 #Region "Streams Read-Only Property"
-    Private _Streams As RetrievableData(Of SimpleDictionary(Of Integer, Stream), StreamsRetrieveData) = New RetrievableData(Of SimpleDictionary(Of Integer, Stream), StreamsRetrieveData)(AddressOf Me.RetrieveStreams, Sub(V) Me._Streams = V)
+    Private _Streams As RetrievableData(Of SimpleDictionary(Of Integer, Stream), StreamsRetrieveData) = New RetrievableData(Of SimpleDictionary(Of Integer, Stream), StreamsRetrieveData)(AddressOf Me.RetrieveStreamsAsync, Sub(V) Me._Streams = V)
 
     Public ReadOnly Property Streams As RetrievableData(Of SimpleDictionary(Of Integer, Stream), StreamsRetrieveData)
         Get

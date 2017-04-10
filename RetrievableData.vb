@@ -6,7 +6,7 @@
         Me.LockObject = New Object()
     End Sub
 
-    Public Async Function Retrieve() As Task(Of T)
+    Public Async Function RetrieveAsync() As Task(Of T)
         Dim R = Await Me.RetrieveDelegate.Invoke()
         SyncLock Me.LockObject
             Me._Value = R
@@ -56,7 +56,7 @@ Public Structure RetrievableData(Of T, TIn)
         Me.LockObject = New Object()
     End Sub
 
-    Public Async Function Retrieve(ByVal Input As TIn) As Task(Of T)
+    Public Async Function RetrieveAsync(ByVal Input As TIn) As Task(Of T)
         Dim R = Await Me.RetrieveDelegate.Invoke(Input)
         SyncLock Me.LockObject
             Me._Value = R
