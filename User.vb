@@ -15,16 +15,16 @@
     End Property
 #End Region
 
-#Region "Email Property"
-    Private _Email As String
+#Region "EmailAddress Property"
+    Private _EmailAddress As String
 
-    Public Property Email As String
+    Public Property EmailAddress As String
         Get
-            Return Me._Email
+            Return Me._EmailAddress
         End Get
         Set(ByVal Value As String)
             Me.VerifyWrite()
-            Me._Email = Value
+            Me._EmailAddress = Value
         End Set
     End Property
 #End Region
@@ -85,16 +85,16 @@
     End Property
 #End Region
 
-#Region "BotOwnerEmail Property"
-    Private _BotOwnerEmail As String
+#Region "BotOwnerEmailAddress Property"
+    Private _BotOwnerEmailAddress As String
 
-    Public Property BotOwnerEmail As String
+    Public Property BotOwnerEmailAddress As String
         Get
-            Return Me._BotOwnerEmail
+            Return Me._BotOwnerEmailAddress
         End Get
         Set(ByVal Value As String)
             Me.VerifyWrite()
-            Me._BotOwnerEmail = Value
+            Me._BotOwnerEmailAddress = Value
         End Set
     End Property
 #End Region

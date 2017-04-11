@@ -142,13 +142,13 @@
                 With U
                     '.Id = T.Item(Constants.Users.Output_Members_UserId).GetInteger()
                     .FullName = T.Item(Constants.Users.Output_Members_FullName).GetString()
-                    .Email = T.Item(Constants.Users.Output_Members_Email).GetString()
+                    .EmailAddress = T.Item(Constants.Users.Output_Members_Email).GetString()
                     .IsActive = T.Item(Constants.Users.Output_Members_IsActive).GetBoolean()
                     .IsAdmin = T.Item(Constants.Users.Output_Members_IsAdmin).GetBoolean()
                     .AvatarUrl = T.Item(Constants.Users.Output_Members_AvatarUrl).GetString()
                     .IsBot = T.Item(Constants.Users.Output_Members_IsBot).GetBoolean()
                     If .IsBot Then
-                        .BotOwnerEmail = T.Item(Constants.Users.Output_Members_BotOwner).GetString()
+                        .BotOwnerEmailAddress = T.Item(Constants.Users.Output_Members_BotOwner).GetString()
                     End If
                 End With
             Catch ex As Exception

@@ -6,7 +6,7 @@
 
     Public Sub New(ByVal Users As IEnumerable(Of User))
         Me.Items = Users.ToArray()
-        Me.ByEmail = New SimpleDictionary(Of String, User)(Me.Items.Select(Function(U) New KeyValuePair(Of String, User)(U.Email, U)))
+        Me.ByEmail = New SimpleDictionary(Of String, User)(Me.Items.Select(Function(U) New KeyValuePair(Of String, User)(U.EmailAddress, U)))
         Me.ByFullName = New SimpleDictionary(Of String, User)(Me.Items.Select(Function(U) New KeyValuePair(Of String, User)(U.FullName, U)), RelaxSameKeysCheck:=True)
     End Sub
 
@@ -36,7 +36,7 @@
 
     Public ReadOnly Property Emails As IEnumerable(Of String) Implements IReadOnlyDictionary(Of String, User).Keys
         Get
-            Return Me.Items.Select(Function(U) U.Email)
+            Return Me.Items.Select(Function(U) U.EmailAddress)
         End Get
     End Property
 
@@ -69,7 +69,7 @@
     End Function
 
     Private Function IEnumerable_Emails_GetEnumerator() As IEnumerator(Of KeyValuePair(Of String, User)) Implements IEnumerable(Of KeyValuePair(Of String, User)).GetEnumerator
-        Return Me.Items.Select(Function(U) New KeyValuePair(Of String, User)(U.Email, U)).GetEnumerator()
+        Return Me.Items.Select(Function(U) New KeyValuePair(Of String, User)(U.EmailAddress, U)).GetEnumerator()
     End Function
 
     Private Function IEnumerable_GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator
