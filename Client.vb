@@ -121,7 +121,7 @@
         Me._IsLoggedIn = True
     End Function
 
-    Private Async Function RetrieveUsersAsync() As Task(Of IReadOnlyList(Of User)) 'Task(Of SimpleDictionary(Of Integer, User))
+    Private Async Function RetrieveUsersAsync() As Task(Of UserCollection)
         Me.VerifyLoggedIn()
 
         Dim R = Await Me.RunApiAsync(EndPoint.Users, HttpMethod.Get, Nothing)
@@ -132,7 +132,6 @@
             Verify.Fail("Invalid response.", ex)
         End Try
 
-        'Dim Res = New KeyValuePair(Of Integer, User)(Members.Count - 1) {}
         Dim Res = New User(Members.Count - 1) {}
 
         For I = 0 To Members.Count - 1
@@ -157,12 +156,10 @@
             End Try
 
             U.Freeze()
-            'Res(I) = New KeyValuePair(Of Integer, User)(U.Id, U)
             Res(I) = U
         Next
 
-        'Return New SimpleDictionary(Of Integer, User)(Res)
-        Return Res.AsReadOnly()
+        Return New UserCollection(Res)
     End Function
 
     Private Async Function RetrieveStreamsAsync(ByVal Data As StreamsRetrieveData) As Task(Of StreamCollection)
@@ -206,9 +203,9 @@
     End Function
 
 #Region "Users Property"
-    Private _Users As RetrievableData(Of IReadOnlyList(Of User)) = New RetrievableData(Of IReadOnlyList(Of User))(AddressOf Me.RetrieveUsersAsync, Sub(V) Me._Users = V)
+    Private _Users As RetrievableData(Of UserCollection) = New RetrievableData(Of UserCollection)(AddressOf Me.RetrieveUsersAsync, Sub(V) Me._Users = V)
 
-    Public ReadOnly Property Users As RetrievableData(Of IReadOnlyList(Of User))
+    Public ReadOnly Property Users As RetrievableData(Of UserCollection)
         Get
             Return Me._Users
         End Get

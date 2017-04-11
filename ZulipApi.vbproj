@@ -74,6 +74,7 @@
     <Compile Include="Helpers\AssertionException.vb" />
     <Compile Include="Helpers\Extensions.vb" />
     <Compile Include="Helpers\Freezable.vb" />
+    <Compile Include="UserCollection.vb" />
     <Compile Include="StreamCollection.vb" />
     <Compile Include="StreamsRetrieveData.vb" />
     <Compile Include="Helpers\Json\JsonDictionaryObject.vb" />
