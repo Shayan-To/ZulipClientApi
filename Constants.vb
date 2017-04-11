@@ -77,4 +77,26 @@
 
     End Class
 
+    Public Class UsersMeSubscriptions
+
+        Private Sub New()
+            Throw New NotSupportedException()
+        End Sub
+
+        Public Const Output_Subscriptions = "subscriptions"
+        Public Const Output_Subscriptions_Description = "description"
+        Public Const Output_Subscriptions_StreamId = "stream_id"
+        Public Const Output_Subscriptions_Name = "name"
+        Public Const Output_Subscriptions_InviteOnly = "invite_only"
+        Public Const Output_Subscriptions_EmailAddress = "email_address"
+
+        Public Const Output_Subscriptions_Color = "color"
+        Public Const Output_Subscriptions_AudibleNotifications = "audible_notifications"
+        Public Const Output_Subscriptions_DesktopNotifications = "desktop_notifications"
+        Public Const Output_Subscriptions_Subscribers = "subscribers"
+        Public Const Output_Subscriptions_PinToTop = "pin_to_top"
+        Public Const Output_Subscriptions_InHomeView = "in_home_view"
+
+    End Class
+
 End Class

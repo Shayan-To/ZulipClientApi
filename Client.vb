@@ -202,6 +202,50 @@
         Return New StreamCollection(Res)
     End Function
 
+    Private Async Function RetrieveStreamSubscriptionsAsync() As Task(Of StreamSubscriptionCollection)
+        Me.VerifyLoggedIn()
+
+        Dim R = Await Me.RunApiAsync(EndPoint.UsersMeSubscriptions, HttpMethod.Get, Nothing)
+        Dim Subscrptions As JsonListObject = Nothing
+        Try
+            Subscrptions = R.Item(Constants.UsersMeSubscriptions.Output_Subscriptions).AsList()
+        Catch ex As Exception
+            Verify.Fail("Invalid response.", ex)
+        End Try
+
+        Dim Res = New StreamSubscription(Subscrptions.Count - 1) {}
+
+        For I = 0 To Subscrptions.Count - 1
+            Dim S = New StreamSubscription()
+
+            Try
+                Dim T = Subscrptions.Item(I).AsDictionary()
+                With S
+                    .Stream.Description = T.Item(Constants.UsersMeSubscriptions.Output_Subscriptions_Description).GetString()
+                    .Stream.Id = T.Item(Constants.UsersMeSubscriptions.Output_Subscriptions_StreamId).GetInteger()
+                    .Stream.Name = T.Item(Constants.UsersMeSubscriptions.Output_Subscriptions_Name).GetString()
+                    .Stream.IsInviteOnly = T.Item(Constants.UsersMeSubscriptions.Output_Subscriptions_InviteOnly).GetBoolean()
+                    .Stream.EmailAddress = T.Item(Constants.UsersMeSubscriptions.Output_Subscriptions_EmailAddress).GetString().NothingIfEmpty()
+
+                    .Color = Color.FromHexString(T.Item(Constants.UsersMeSubscriptions.Output_Subscriptions_Color).GetString())
+                    .ShowAudibleNotifications = T.Item(Constants.UsersMeSubscriptions.Output_Subscriptions_AudibleNotifications).GetBoolean()
+                    .ShowDesktopNotifications = T.Item(Constants.UsersMeSubscriptions.Output_Subscriptions_DesktopNotifications).GetBoolean()
+                    .PinToTop = T.Item(Constants.UsersMeSubscriptions.Output_Subscriptions_PinToTop).GetBoolean()
+                    .ShowInHomeView = T.Item(Constants.UsersMeSubscriptions.Output_Subscriptions_InHomeView).GetBoolean()
+
+                    .SubscribersEmailAddresses.AddRange(T.Item(Constants.UsersMeSubscriptions.Output_Subscriptions_Subscribers).AsList().Select(Function(V) V.GetString()))
+                End With
+            Catch ex As Exception
+                Verify.Fail("Invalid response.", ex)
+            End Try
+
+            S.Freeze()
+            Res(I) = S
+        Next
+
+        Return New StreamSubscriptionCollection(Res)
+    End Function
+
 #Region "Users Property"
     Private _Users As RetrievableData(Of UserCollection) = New RetrievableData(Of UserCollection)(AddressOf Me.RetrieveUsersAsync, Sub(V) Me._Users = V)
 
@@ -218,6 +262,16 @@
     Public ReadOnly Property Streams As RetrievableData(Of StreamCollection, StreamsRetrieveData)
         Get
             Return Me._Streams
+        End Get
+    End Property
+#End Region
+
+#Region "StreamSubscriptions Read-Only Property"
+    Private _StreamSubscriptions As RetrievableData(Of StreamSubscriptionCollection) = New RetrievableData(Of StreamSubscriptionCollection)(AddressOf Me.RetrieveStreamSubscriptionsAsync, Sub(V) Me._StreamSubscriptions = V)
+
+    Public ReadOnly Property StreamSubscriptions As RetrievableData(Of StreamSubscriptionCollection)
+        Get
+            Return Me._StreamSubscriptions
         End Get
     End Property
 #End Region

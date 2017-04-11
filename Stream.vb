@@ -71,4 +71,17 @@
     End Property
 #End Region
 
+#Region "EmailAddress Property"
+    Private _EmailAddress As String
+
+    Public Property EmailAddress As String
+        Get
+            Return Me._EmailAddress
+        End Get
+        Set(ByVal Value As String)
+            Me._EmailAddress = Value
+        End Set
+    End Property
+#End Region
+
 End Class
