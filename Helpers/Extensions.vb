@@ -113,7 +113,7 @@
     End Function
 
     <Extension()>
-    Public Function AsReadOnly(Of T)(ByVal Self As IList(Of T)) As IReadOnlyList(Of T)
+    Public Function AsReadOnly(Of T)(ByVal Self As IList(Of T)) As ReadOnlyCollection(Of T)
         Return New ReadOnlyCollection(Of T)(Self)
     End Function
 
