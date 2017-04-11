@@ -162,6 +162,21 @@
         Return New UserCollection(Res)
     End Function
 
+    Private Async Function RetrieveMyPointerAsync() As Task(Of Integer)
+        Me.VerifyLoggedIn()
+
+
+        Dim R = Await Me.RunApiAsync(EndPoint.UsersMePointer, HttpMethod.Get, Nothing)
+        Dim Pointer As Integer
+        Try
+            Pointer = R.Item(Constants.UsersMePointer.Output_Pointer).GetInteger()
+        Catch ex As Exception
+            Verify.Fail("Invalid response.", ex)
+        End Try
+
+        Return Pointer
+    End Function
+
     Private Async Function RetrieveStreamsAsync(ByVal Data As StreamsRetrieveData) As Task(Of StreamCollection)
         Me.VerifyLoggedIn()
 
@@ -252,6 +267,16 @@
     Public ReadOnly Property Users As RetrievableData(Of UserCollection)
         Get
             Return Me._Users
+        End Get
+    End Property
+#End Region
+
+#Region "MyPointer Read-Only Property"
+    Private _MyPointer As RetrievableData(Of Integer) = New RetrievableData(Of Integer)(AddressOf Me.RetrieveMyPointerAsync, Sub(V) Me._MyPointer = V)
+
+    Public ReadOnly Property MyPointer As RetrievableData(Of Integer)
+        Get
+            Return Me._MyPointer
         End Get
     End Property
 #End Region

@@ -99,4 +99,14 @@
 
     End Class
 
+    Public Class UsersMePointer
+
+        Private Sub New()
+            Throw New NotSupportedException()
+        End Sub
+
+        Public Const Output_Pointer = "pointer"
+
+    End Class
+
 End Class
