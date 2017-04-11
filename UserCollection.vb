@@ -7,7 +7,7 @@
         Me.Items = Users.ToArray()
         Me.ById = New SimpleDictionary(Of Integer, User)(Me.Items.Select(Function(U) New KeyValuePair(Of Integer, User)(U.Id, U)))
         Me.ByEmail = New SimpleDictionary(Of String, User)(Me.Items.Select(Function(U) New KeyValuePair(Of String, User)(U.Email, U)))
-        Me.ByFullName = New SimpleDictionary(Of String, User)(Me.Items.Select(Function(U) New KeyValuePair(Of String, User)(U.FullName, U)))
+        Me.ByFullName = New SimpleDictionary(Of String, User)(Me.Items.Select(Function(U) New KeyValuePair(Of String, User)(U.FullName, U)), RelaxSameKeysCheck:=True)
     End Sub
 
     Public ReadOnly Property Count As Integer Implements IReadOnlyCollection(Of KeyValuePair(Of Integer, User)).Count, IReadOnlyCollection(Of KeyValuePair(Of String, User)).Count, IReadOnlyCollection(Of User).Count
