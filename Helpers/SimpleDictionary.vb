@@ -2,17 +2,19 @@
     Implements IReadOnlyDictionary(Of TKey, TValue),
                IReadOnlyList(Of KeyValuePair(Of TKey, TValue))
 
-    Public Sub New(ByVal Items As IEnumerable(Of KeyValuePair(Of TKey, TValue)), ByVal Comparer As IEqualityComparer(Of TKey))
+    Public Sub New(ByVal Items As IEnumerable(Of KeyValuePair(Of TKey, TValue)), ByVal Comparer As IEqualityComparer(Of TKey), Optional ByVal RelaxSameKeysCheck As Boolean = False)
         Me.List = Items.ToArray()
         Me.Comparer = Comparer
         Array.Sort(Me.List, Me.CompareKeyHash)
-        For I = 0 To Me.List.Length - 2
-            Verify.False(Me.Comparer.Equals(Me.List(I).Key, Me.List(I + 1).Key), "Cannot have two items with the same key.")
-        Next
+        If Not RelaxSameKeysCheck Then
+            For I = 0 To Me.List.Length - 2
+                Verify.False(Me.Comparer.Equals(Me.List(I).Key, Me.List(I + 1).Key), "Cannot have two items with the same key.")
+            Next
+        End If
     End Sub
 
-    Public Sub New(ByVal Items As IEnumerable(Of KeyValuePair(Of TKey, TValue)))
-        Me.New(Items, EqualityComparer(Of TKey).Default)
+    Public Sub New(ByVal Items As IEnumerable(Of KeyValuePair(Of TKey, TValue)), Optional ByVal RelaxSameKeysCheck As Boolean = False)
+        Me.New(Items, EqualityComparer(Of TKey).Default, RelaxSameKeysCheck)
     End Sub
 
     Public ReadOnly Property Count As Integer Implements IReadOnlyCollection(Of KeyValuePair(Of TKey, TValue)).Count
