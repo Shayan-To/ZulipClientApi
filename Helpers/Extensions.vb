@@ -113,9 +113,24 @@
     End Function
 
     <Extension()>
+    Public Function NothingIfEmpty(ByVal Self As String) As String
+        If Self.Length = 0 Then
+            Return Nothing
+        End If
+        Return Self
+    End Function
+
+    <Extension()>
     Public Function AsReadOnly(Of T)(ByVal Self As IList(Of T)) As ReadOnlyCollection(Of T)
         Return New ReadOnlyCollection(Of T)(Self)
     End Function
+
+    <Extension()>
+    Public Sub AddRange(Of T)(ByVal Self As IList(Of T), ByVal Items As IEnumerable(Of T))
+        For Each I In Items
+            Self.Add(I)
+        Next
+    End Sub
 
     Private Function LeastPowerOfTwoOnMin(ByVal Min As Integer) As Integer
         If Min <1 Then
