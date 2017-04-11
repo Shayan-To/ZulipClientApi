@@ -27,24 +27,29 @@
 
     <Extension()>
     Public Function AsDictionary(ByVal Self As JsonObject) As JsonDictionaryObject
-        Return TryCast(Self, JsonDictionaryObject)
+        Dim R = TryCast(Self, JsonDictionaryObject)
+        Verify.False(R Is Nothing, "Item has to be a dictionary.")
+        Return R
     End Function
 
     <Extension()>
     Public Function AsList(ByVal Self As JsonObject) As JsonListObject
-        Return TryCast(Self, JsonListObject)
+        Dim R = TryCast(Self, JsonListObject)
+        Verify.False(R Is Nothing, "Item has to be a list.")
+        Return R
     End Function
 
     <Extension()>
-    Public Function AsValue(ByVal Self As JsonObject) As JsonValueObject
-        Return TryCast(Self, JsonValueObject)
+    Private Function AsValue(ByVal Self As JsonObject, ByVal ErrorMessage As String) As JsonValueObject
+        Dim R = TryCast(Self, JsonValueObject)
+        Verify.False(R Is Nothing, ErrorMessage)
+        Return R
     End Function
 
     <Extension()>
     Public Function GetString(ByVal Self As JsonObject) As String
         Assert.False(Self Is Nothing)
-        Verify.True(TypeOf Self Is JsonValueObject, "A string value was expected, not a list or dictionary.")
-        Dim V = Self.AsValue()
+        Dim V = Self.AsValue("A string value was expected, not a list or dictionary.")
 
 #If Not RelaxedStrings Then
         Verify.True(V.IsString, "Value must be a string.")
@@ -56,8 +61,7 @@
     <Extension()>
     Public Function GetBoolean(ByVal Self As JsonObject) As Boolean
         Assert.False(Self Is Nothing)
-        Verify.True(TypeOf Self Is JsonValueObject, "A boolean value was expected, not a list or dictionary.")
-        Dim V = Self.AsValue()
+        Dim V = Self.AsValue("A boolean value was expected, not a list or dictionary.")
 
 #If Not RelaxedStrings Then
         Verify.False(V.IsString, "Value must be a boolean.")
@@ -70,8 +74,7 @@
     <Extension()>
     Public Function GetInteger(ByVal Self As JsonObject) As Integer
         Assert.False(Self Is Nothing)
-        Verify.True(TypeOf Self Is JsonValueObject, "An integer value was expected, not a list or dictionary.")
-        Dim V = Self.AsValue()
+        Dim V = Self.AsValue("An integer value was expected, not a list or dictionary.")
 
 #If Not RelaxedStrings Then
         Verify.False(V.IsString, "Value must be an integer.")
@@ -85,8 +88,7 @@
     <Extension()>
     Public Function GetDouble(ByVal Self As JsonObject) As Double
         Assert.False(Self Is Nothing)
-        Verify.True(TypeOf Self Is JsonValueObject, "A number value was expected, not a list or dictionary.")
-        Dim V = Self.AsValue()
+        Dim V = Self.AsValue("A number value was expected, not a list or dictionary.")
 
 #If Not RelaxedStrings Then
         Verify.False(V.IsString, "Value must be a number.")
@@ -100,8 +102,7 @@
     <Extension()>
     Public Function GetEnum(ByVal Self As JsonObject, ByVal Values As String()) As Integer
         Assert.False(Self Is Nothing)
-        Verify.True(TypeOf Self Is JsonValueObject, "A string value was expected, not a list or dictionary.")
-        Dim V = Self.AsValue()
+        Dim V = Self.AsValue("A string value was expected, not a list or dictionary.")
 
 #If Not RelaxedStrings Then
         Verify.True(V.IsString, "Value must be a string.")
