@@ -29,7 +29,7 @@
         End Get
     End Property
 
-    Default Public ReadOnly Property Item(ByVal Index As Integer) As KeyValuePair(Of TKey, TValue) Implements IReadOnlyList(Of KeyValuePair(Of TKey, TValue)).Item
+    Public ReadOnly Property ItemAt(ByVal Index As Integer) As KeyValuePair(Of TKey, TValue) Implements IReadOnlyList(Of KeyValuePair(Of TKey, TValue)).Item
         Get
             Return Me.List(Index)
         End Get
