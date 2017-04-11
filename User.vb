@@ -1,20 +1,6 @@
 ﻿Public Class User
     Inherits Freezable
 
-#Region "Id Property"
-    Private _Id As Integer
-
-    Public Property Id As Integer
-        Get
-            Return Me._Id
-        End Get
-        Set(ByVal Value As Integer)
-            Me.VerifyWrite()
-            Me._Id = Value
-        End Set
-    End Property
-#End Region
-
 #Region "FullName Property"
     Private _FullName As String
 
