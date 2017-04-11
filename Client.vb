@@ -38,7 +38,7 @@
         QueryParamsBuilder.Clear()
 
         If QueryParams.Length <> 0 And Not Me.ParametersGoInBody(HttpMethod) Then
-            Url &= "?" & QueryParamsBuilder.ToString()
+            Url &= "?" & QueryParams
         End If
 
         Dim Request = Net.WebRequest.CreateHttp(Url)
@@ -203,7 +203,7 @@
                     .Description = T.Item(Constants.Streams.Output_Streams_Description).GetString()
                     .IsInviteOnly = T.Item(Constants.Streams.Output_Streams_InviteOnly).GetBoolean()
                     If Data.IncludeDefault Then
-                        '.IsDefault = T.Item(Constants.Streams.Output_Streams_IsDefault).GetBoolean()
+                        .IsDefault = T.Item(Constants.Streams.Output_Streams_IsDefault).GetBoolean()
                     End If
                 End With
             Catch ex As Exception
