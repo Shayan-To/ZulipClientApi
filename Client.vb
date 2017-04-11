@@ -165,7 +165,7 @@
         Return Res.AsReadOnly()
     End Function
 
-    Private Async Function RetrieveStreamsAsync(ByVal Data As StreamsRetrieveData) As Task(Of SimpleDictionary(Of Integer, Stream))
+    Private Async Function RetrieveStreamsAsync(ByVal Data As StreamsRetrieveData) As Task(Of StreamCollection)
         Me.VerifyLoggedIn()
 
         Data = Data.Fix()
@@ -178,7 +178,7 @@
             Verify.Fail("Invalid response.", ex)
         End Try
 
-        Dim Res = New KeyValuePair(Of Integer, Stream)(Streams.Count - 1) {}
+        Dim Res = New Stream(Streams.Count - 1) {}
 
         For I = 0 To Streams.Count - 1
             Dim S = New Stream()
@@ -199,10 +199,10 @@
             End Try
 
             S.Freeze()
-            Res(I) = New KeyValuePair(Of Integer, Stream)(S.Id, S)
+            Res(I) = S
         Next
 
-        Return New SimpleDictionary(Of Integer, Stream)(Res)
+        Return New StreamCollection(Res)
     End Function
 
 #Region "Users Property"
@@ -216,9 +216,9 @@
 #End Region
 
 #Region "Streams Read-Only Property"
-    Private _Streams As RetrievableData(Of SimpleDictionary(Of Integer, Stream), StreamsRetrieveData) = New RetrievableData(Of SimpleDictionary(Of Integer, Stream), StreamsRetrieveData)(AddressOf Me.RetrieveStreamsAsync, Sub(V) Me._Streams = V)
+    Private _Streams As RetrievableData(Of StreamCollection, StreamsRetrieveData) = New RetrievableData(Of StreamCollection, StreamsRetrieveData)(AddressOf Me.RetrieveStreamsAsync, Sub(V) Me._Streams = V)
 
-    Public ReadOnly Property Streams As RetrievableData(Of SimpleDictionary(Of Integer, Stream), StreamsRetrieveData)
+    Public ReadOnly Property Streams As RetrievableData(Of StreamCollection, StreamsRetrieveData)
         Get
             Return Me._Streams
         End Get
