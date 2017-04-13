@@ -75,8 +75,11 @@
     <Compile Include="Helpers\AssertionException.vb" />
     <Compile Include="Helpers\Extensions.vb" />
     <Compile Include="Helpers\Freezable.vb" />
+    <Compile Include="PrivateMessageRecipient.vb" />
     <Compile Include="StreamSubscription.vb" />
     <Compile Include="StreamSubscriptionCollection.vb" />
+    <Compile Include="TypingAction.vb" />
+    <Compile Include="TypingNotificationData.vb" />
     <Compile Include="UserCollection.vb" />
     <Compile Include="StreamCollection.vb" />
     <Compile Include="StreamsRetrieveData.vb" />

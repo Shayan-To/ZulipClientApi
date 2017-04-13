@@ -165,7 +165,6 @@
     Private Async Function RetrieveMyPointerAsync() As Task(Of Integer)
         Me.VerifyLoggedIn()
 
-
         Dim R = Await Me.RunApiAsync(EndPoint.UsersMePointer, HttpMethod.Get, Nothing)
         Dim Pointer As Integer
         Try
@@ -259,6 +258,12 @@
         Next
 
         Return New StreamSubscriptionCollection(Res)
+    End Function
+
+    Public Async Function SendTypingNotificationAsync(ByVal Data As TypingNotificationData) As Task
+        Me.VerifyLoggedIn()
+
+        Dim R = Await Me.RunApiAsync(EndPoint.Typing, HttpMethod.Post, Data.GetDataForSendTypingNotification(Me.JsonWriter.Value))
     End Function
 
 #Region "Users Property"

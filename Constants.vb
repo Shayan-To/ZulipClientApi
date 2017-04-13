@@ -109,4 +109,15 @@
 
     End Class
 
+    Public Class Typing
+
+        Private Sub New()
+            Throw New NotSupportedException()
+        End Sub
+
+        Public Const Input_Op = "op"
+        Public Const Input_To = "to"
+
+    End Class
+
 End Class
