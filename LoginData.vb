@@ -1,5 +1,29 @@
 ﻿Public Structure LoginData
 
+    Private Sub New(ByVal Method As LoginMethod, ByVal UserName As String, ByVal Password As String, ByVal ApiKey As String)
+        Assert.True((Method = LoginMethod.Password).Implies(ApiKey Is Nothing))
+        Assert.True((Method = LoginMethod.ApiKey).Implies(Password Is Nothing))
+
+        Me._Method = Method
+        Me._UserName = UserName
+        Me._Password = Password
+        Me._ApiKey = ApiKey
+    End Sub
+
+    Public Shared Function CreateByPassword(ByVal UserName As String, ByVal Password As String) As LoginData
+        Verify.NonNullArg(UserName, NameOf(UserName))
+        Verify.NonNullArg(Password, NameOf(Password))
+
+        Return New LoginData(LoginMethod.Password, UserName, Password, Nothing)
+    End Function
+
+    Public Shared Function CreateByApiKey(ByVal UserName As String, ByVal ApiKey As String) As LoginData
+        Verify.NonNullArg(UserName, NameOf(UserName))
+        Verify.NonNullArg(ApiKey, NameOf(ApiKey))
+
+        Return New LoginData(LoginMethod.ApiKey, UserName, Nothing, ApiKey)
+    End Function
+
     Friend Function GetDataForFetchApiKey() As Parameter()
         Return New Parameter() {
                    New Parameter(Constants.FetchApiKey.Input_UserName, Me.UserName),
@@ -7,65 +31,43 @@
                }
     End Function
 
-#Region "Method Property"
-    Private _Method As LoginMethod
+#Region "Method Read-Only Property"
+    Private ReadOnly _Method As LoginMethod
 
-    Public Property Method As LoginMethod
+    Public ReadOnly Property Method As LoginMethod
         Get
             Return Me._Method
         End Get
-        Set(ByVal Value As LoginMethod)
-            If Value = LoginMethod.ApiKey Then
-                Me._Password = Nothing
-            ElseIf Value = LoginMethod.Password Then
-                Me._ApiKey = Nothing
-            Else
-                Verify.FailArg(NameOf(Me.Method), "Value must be from within the available values.")
-            End If
-
-            Me._Method = Value
-        End Set
     End Property
 #End Region
 
-#Region "UserName Property"
-    Private _UserName As String
+#Region "UserName Read-Only Property"
+    Private ReadOnly _UserName As String
 
-    Public Property UserName As String
+    Public ReadOnly Property UserName As String
         Get
             Return Me._UserName
         End Get
-        Set(ByVal Value As String)
-            Me._UserName = Value
-        End Set
     End Property
 #End Region
 
-#Region "ApiKey Property"
-    Private _ApiKey As String
+#Region "ApiKey Read-Only Property"
+    Private ReadOnly _ApiKey As String
 
-    Public Property ApiKey As String
+    Public ReadOnly Property ApiKey As String
         Get
             Return Me._ApiKey
         End Get
-        Set(ByVal Value As String)
-            Verify.True(Me.Method = LoginMethod.ApiKey, $"Cannot set {NameOf(Me.ApiKey)} when {NameOf(Me.Method)} is not {NameOf(LoginMethod.ApiKey)}.")
-            Me._ApiKey = Value
-        End Set
     End Property
 #End Region
 
-#Region "Password Property"
-    Private _Password As String
+#Region "Password Read-Only Property"
+    Private ReadOnly _Password As String
 
-    Public Property Password As String
+    Public ReadOnly Property Password As String
         Get
             Return Me._Password
         End Get
-        Set(ByVal Value As String)
-            Verify.True(Me.Method = LoginMethod.Password, $"Cannot set {NameOf(Me.Password)} when {NameOf(Me.Method)} is not {NameOf(LoginMethod.Password)}.")
-            Me._Password = Value
-        End Set
     End Property
 #End Region
 

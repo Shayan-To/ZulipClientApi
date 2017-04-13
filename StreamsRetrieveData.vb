@@ -1,15 +1,25 @@
-﻿Public Structure StreamsRetrieveData
+﻿''' <summary>
+''' Optional
+''' </summary>
+Public Structure StreamsRetrieveData
 
-    Public Sub New(Optional ByVal IncludePublic As Boolean = True,
-                   Optional ByVal IncludeSubscribed As Boolean = True,
-                   Optional ByVal IncludeAllActive As Boolean = False,
-                   Optional ByVal IncludeDefault As Boolean = False)
+    Private Sub New(ByVal IncludePublic As Boolean,
+                   ByVal IncludeSubscribed As Boolean,
+                   ByVal IncludeAllActive As Boolean,
+                   ByVal IncludeDefault As Boolean)
         Me._IncludePublic = IncludePublic
         Me._IncludeSubscribed = IncludeSubscribed
         Me._IncludeAllActive = IncludeAllActive
         Me._IncludeDefault = IncludeDefault
         Me.IsCreated = True
     End Sub
+
+    Public Shared Function Create(Optional ByVal IncludePublic As Boolean = True,
+                                  Optional ByVal IncludeSubscribed As Boolean = True,
+                                  Optional ByVal IncludeAllActive As Boolean = False,
+                                  Optional ByVal IncludeDefault As Boolean = False) As StreamsRetrieveData
+        Return New StreamsRetrieveData(IncludePublic, IncludeSubscribed, IncludeAllActive, IncludeDefault)
+    End Function
 
     Friend Function Fix() As StreamsRetrieveData
         If Me.IsCreated Then
