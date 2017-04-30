@@ -3,7 +3,13 @@
     <Extension()>
     Public Async Function GetRequestStreamAsync(ByVal Self As Net.HttpWebRequest) As Task(Of IO.Stream)
         Dim Res = New TaskCompletionSource(Of IO.Stream)()
-        Await Task.Run(Sub() Self.BeginGetRequestStream(Sub(Ar) Res.SetResult(Self.EndGetRequestStream(Ar)), Nothing))
+        Await Task.Run(Sub() Self.BeginGetRequestStream(Sub(Ar)
+                                                            Try
+                                                                Res.SetResult(Self.EndGetRequestStream(Ar))
+                                                            Catch Ex As Exception
+                                                                Res.SetException(Ex)
+                                                            End Try
+                                                        End Sub, Nothing))
         Return Await Res.Task
     End Function
 
@@ -13,8 +19,10 @@
         Await Task.Run(Sub() Self.BeginGetResponse(Sub(Ar)
                                                        Try
                                                            Res.SetResult(DirectCast(Self.EndGetResponse(Ar), Net.HttpWebResponse))
-                                                       Catch ex As Net.WebException
-                                                           Res.SetResult(DirectCast(ex.Response, Net.HttpWebResponse))
+                                                       Catch Ex As Net.WebException
+                                                           Res.SetResult(DirectCast(Ex.Response, Net.HttpWebResponse))
+                                                       Catch Ex As Exception
+                                                           Res.SetException(Ex)
                                                        End Try
                                                    End Sub, Nothing))
         Return Await Res.Task
